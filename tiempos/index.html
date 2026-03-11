@@ -7,27 +7,48 @@
 
 <title>Registrar Tiempo</title>
 
-<link rel="stylesheet" href="/css/estilos.css">
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+padding:40px;
+}
+
+input,select,button{
+padding:10px;
+margin:10px;
+font-size:16px;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<header>
-<h1>Registrar Tiempo de Recorrido</h1>
-</header>
+<h1>Registrar tiempo del sendero</h1>
 
-<div class="container">
+<form>
 
-<p>Contanos cuánto tardaste en completar el sendero.</p>
+<input placeholder="Tu nombre">
 
-<a class="boton verde" href="PEGAR_LINK_GOOGLE_FORM">
-Abrir formulario
-</a>
+<br>
 
-</div>
+<select>
+<option>Sendero Fácil</option>
+<option>Sendero Difícil</option>
+</select>
 
-<a class="volver" href="/">← Volver</a>
+<br>
+
+<input placeholder="Tiempo (ej: 25:30)">
+
+<br>
+
+<button>Enviar</button>
+
+</form>
 
 </body>
 </html>
