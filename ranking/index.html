@@ -5,20 +5,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Registrar Tiempo</title>
+<title>Ranking del Sendero</title>
 
 <style>
 
 body{
 font-family:Arial;
 text-align:center;
-padding:40px;
+padding:20px;
 }
 
-input,select,button{
-padding:10px;
-margin:10px;
-font-size:16px;
+iframe{
+width:100%;
+max-width:900px;
+height:600px;
+border:none;
 }
 
 </style>
@@ -27,28 +28,15 @@ font-size:16px;
 
 <body>
 
-<h1>Registrar tiempo del sendero</h1>
+<h1>Ranking de Tiempos</h1>
 
-<form>
+<p>Mejores tiempos registrados por visitantes</p>
 
-<input placeholder="Tu nombre">
+<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSb00cikC86w7CHKZVuXSWL0jdly8emQTkjmLa6TQveurjN1i7BCH7O8sMvSzeINsKbpSK0uW1riu38/pubhtml"></iframe>
 
-<br>
+<br><br>
 
-<select>
-<option>Sendero Fácil</option>
-<option>Sendero Difícil</option>
-</select>
-
-<br>
-
-<input placeholder="Tiempo (ej: 25:30)">
-
-<br>
-
-<button>Enviar</button>
-
-</form>
+<a href="../">Volver</a>
 
 </body>
 </html>
