@@ -1,69 +1,580 @@
-body{
-font-family:Arial;
-margin:0;
-background:#e9f2f7;
-text-align:center;
+/* ======================================
+   ESTILOS PARA SENDEROS DE GUARDIA MITRE
+   Diseño mobile-first con colores naturaleza
+   ====================================== */
+
+/* Variables de colores y espaciado */
+:root {
+    --color-naturaleza: #0EA5E9;
+    --color-naturaleza-claro: #38BDF8;
+    --color-rio: #0284C7;
+    --color-rio-claro: #7DD3FC;
+    --color-accion: #F59E0B;
+    --color-ranking: #F97316;
+    --color-texto: #374151;
+    --color-texto-claro: #6B7280;
+    --color-fondo: #F0F9FF;
+    --color-blanco: #FFFFFF;
+    --sombra-suave: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --sombra-media: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --radio-botones: 1rem;
+    --tamano-botones: 3.5rem;
 }
 
-header{
-background:#2f4f75;
-color:white;
-padding:25px;
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container{
-padding:30px;
-max-width:500px;
-margin:auto;
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
 }
 
-.boton{
-display:block;
-padding:18px;
-margin:15px 0;
-color:white;
-text-decoration:none;
-border-radius:12px;
-font-size:18px;
-font-weight:bold;
+/* Navegación */
+.nav-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radio-botones);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
 }
 
-.verde{
-background:#2e7d32;
+.nav-link:hover,
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
-.verde2{
-background:#4caf50;
+/* Botones principales */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--radio-botones);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: var(--tamano-botones);
+    box-shadow: var(--sombra-suave);
 }
 
-.azul{
-background:#1976d2;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
 }
 
-.naranja{
-background:#f57c00;
+.btn-naturaleza {
+    background-color: #0EA5E9;
+    color: var(--color-blanco);
 }
 
-.amarilloclaro{
-background:#fff273;
+.btn-naturaleza:hover {
+    background-color: #1F2937;
 }
 
-.card{
-background:white;
-padding:20px;
-margin:15px;
-border-radius:10px;
+.btn-rio {
+    background-color: var(--color-rio);
+    color: var(--color-blanco);
 }
 
-.volver{
-display:block;
-margin:20px;
-text-decoration:none;
-color:#2f4f75;
+.btn-rio:hover {
+    background-color: #1D4ED8;
 }
 
-footer{
-margin-top:40px;
-padding:20px;
-font-size:14px;
+.btn-accion {
+    background-color: var(--color-accion);
+    color: var(--color-blanco);
+}
+
+.btn-accion:hover {
+    background-color: #EA580C;
+}
+
+.btn-ranking {
+    background-color: var(--color-ranking);
+    color: var(--color-blanco);
+}
+
+.btn-ranking:hover {
+    background-color: #D97706;
+}
+
+.btn-green {
+    background-color: #059669;
+    color: var(--color-blanco);
+}
+
+.btn-green:hover {
+    background-color: #047857;
+}
+
+.btn-gray {
+    background-color: #374151;
+    color: var(--color-blanco);
+}
+
+.btn-gray:hover {
+    background-color: #1F2937;
+}
+
+/* Cards y contenedores */
+.card {
+    background-color: var(--color-blanco);
+    border-radius: 1rem;
+    box-shadow: var(--sombra-suave);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--sombra-media);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+    color: var(--color-blanco);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Formularios optimizados para móvil */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #0EA5E9;
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: var(--radio-botones);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: var(--color-blanco);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #0EA5E9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Hacer formularios más grandes en móvil para fácil uso */
+@media (max-width: 768px) {
+    .form-input,
+    .form-select,
+    .form-textarea {
+        font-size: 16px; /* Previene zoom en iOS */
+        padding: 1.25rem;
+    }
+}
+
+/* Grid y layouts responsivos */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Secciones específicas */
+
+/* Hero section */
+.hero {
+    background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+    color: var(--color-blanco);
+    padding: 3rem 1rem;
+    text-align: center;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Stats section */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: var(--color-blanco);
+    border-radius: var(--radio-botones);
+    box-shadow: var(--sombra-suave);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0EA5E9;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--color-texto-claro);
+    margin-top: 0.5rem;
+}
+
+/* Senderos específicos */
+.sendero-card {
+    background-color: var(--color-blanco);
+    border-radius: 1rem;
+    box-shadow: var(--sombra-suave);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.sendero-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+    color: var(--color-blanco);
+}
+
+.sendero-dificultad {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.dificultad-baja {
+    background-color: #10B981;
+}
+
+.dificultad-media {
+    background-color: #F59E0B;
+}
+
+.dificultad-alta {
+    background-color: #EF4444;
+}
+
+.sendero-body {
+    padding: 1.5rem;
+}
+
+.sendero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+.sendero-stat {
+    text-align: center;
+}
+
+.sendero-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0EA5E9;
+}
+
+.sendero-stat-label {
+    font-size: 0.75rem;
+    color: var(--color-texto-claro);
+}
+
+/* Mapa interactivo */
+.map-container {
+    height: 500px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--sombra-media);
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        height: 400px;
+    }
+}
+
+/* Ranking */
+.ranking-table {
+    width: 100%;
+    background-color: var(--color-blanco);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+}
+
+.ranking-header {
+    background: linear-gradient(135deg, var(--color-ranking), #FCD34D);
+    color: var(--color-blanco);
+    font-weight: 600;
+}
+
+.ranking-row {
+    border-bottom: 1px solid #E5E7EB;
+    transition: background-color 0.3s ease;
+}
+
+.ranking-row:hover {
+    background-color: #F9FAFB;
+}
+
+.ranking-position {
+    font-weight: 700;
+    color: #F97316;
+    font-size: 1.25rem;
+}
+
+.ranking-position.top-3 {
+    color: #D97706;
+}
+
+/* Flora y fauna */
+.especie-card {
+    background-color: var(--color-blanco);
+    border-radius: 1rem;
+    box-shadow: var(--sombra-suave);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.especie-card:hover {
+    box-shadow: var(--sombra-media);
+    transform: translateY(-2px);
+}
+
+.especie-imagen {
+    height: 200px;
+    background-color: #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #9CA3AF;
+}
+
+.especie-content {
+    padding: 1.5rem;
+}
+
+.especie-tipo {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.tipo-flora {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.tipo-fauna {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+.especie-nombre-comun {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0EA5E9;
+    margin-bottom: 0.25rem;
+}
+
+.especie-nombre-cientifico {
+    font-style: italic;
+    color: var(--color-texto-claro);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.especie-descripcion {
+    color: var(--color-texto);
+    margin-bottom: 1rem;
+}
+
+.especie-estado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.estado-nativa {
+    color: #10B981;
+}
+
+.estado-introducida {
+    color: #F59E0B;
+}
+
+.estado-inv{
+    color: #EF4444;
+}
+
+/* Utilidades */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+
+.hidden { display: none; }
+.flex { display: flex; }
+.grid { display: grid; }
+
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+.space-x-2 > * + * { margin-left: 0.5rem; }
+.space-x-3 > * + * { margin-left: 0.75rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-2xl { border-radius: 1rem; }
+
+.shadow-lg { box-shadow: var(--sombra-media); }
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus visible para accesibilidad */
+.focus\:ring:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px #0EA5E9;
+}
+
+/* Impresión */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+}
+
+/* Dark mode (opcional) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-fondo: #1F2937;
+        --color-texto: #F9FAFB;
+        --color-texto-claro: #D1D5DB;
+    }
+    
+    body {
+        background-color: var(--color-fondo);
+        color: var(--color-texto);
+    }
 }
