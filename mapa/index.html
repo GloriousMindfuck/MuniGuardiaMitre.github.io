@@ -1,62 +1,790 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Mapa del Sendero</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<style>
-
-body{
-font-family: Arial;
-margin:0;
-}
-
-#map{
-height:100vh;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - Guardia Mitre</title>
+    <meta name="description" content="Mapa interactivo de los senderos turísticos de Guardia Mitre. Visualiza rutas, puntos de interés y navegación GPS.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/estilos.css">
+    
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'naturaleza': '#0EA5E9',
+                        'rio': '#0284C7',
+                        'accion': '#F59E0B',
+                        'ranking': '#F97316',
+                        'naturaleza-claro': '#38BDF8',
+                        'rio-claro': '#7DD3FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Estilos específicos para el mapa */
+        .map-container {
+            height: 70vh;
+            min-height: 400px;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .map-container {
+                height: 60vh;
+                min-height: 300px;
+            }
+        }
+        
+        .leaflet-popup-content {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .popup-title {
+            font-weight: 600;
+            color: #0EA5E9;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .popup-info {
+            color: #6B7280;
+            margin-bottom: 4px;
+        }
+        
+        .popup-buttons {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .popup-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .popup-btn-primary {
+            background-color: var(--color-naturaleza);
+            color: white;
+        }
+        
+        .popup-btn-secondary {
+            background-color: #F3F4F6;
+            color: var(--color-texto);
+            border: 1px solid #E5E7EB;
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .map-controls {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .layer-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .layer-control:last-child {
+            margin-bottom: 0;
+        }
+        
+        .layer-checkbox {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--color-naturaleza);
+        }
+        
+        .legend {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 0.875rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .route-line {
+            height: 4px;
+            width: 30px;
+            border-radius: 2px;
+        }
+    </style>
 </head>
+<body class="bg-green-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- Logo Municipalidad -->
+                    <div class="bg-white rounded-full p-2 shadow-lg">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">GM</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Mapa Interactivo</h1>
+                        <p class="text-blue-100 text-sm">Guardia Mitre - Río Negro, Argentina</p>
+                    </div>
+                </div>
+                <a href="../index.html" class="text-white hover:text-blue-200 transition-colors">
+                    <i class="fas fa-home text-2xl"></i>
+                </a>
+            </div>
+            
+            <!-- Navegación -->
+            <nav class="mt-4">
+                <ul class="flex flex-wrap gap-2">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../senderos/index.html" class="nav-link">Senderos</a></li>
+                    <li><a href="index.html" class="nav-link active">Mapa</a></li>
+                    <li><a href="../tiempos/index.html" class="nav-link">Registrar Tiempo</a></li>
+                    <li><a href="../ranking/index.html" class="nav-link">Ranking</a></li>
+                    <li><a href="../flora/index.html" class="nav-link">Flora y Fauna</a></li>
+                    <li><a href="../galeria/index.html" class="nav-link">Galería</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-8">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-4xl font-bold text-naturaleza mb-4">
+                    Explora los Senderos
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    Visualiza los senderos turísticos de Guardia Mitre en un mapa interactivo. 
+                    Encuentra puntos de interés, estacionamientos y servicios disponibles.
+                </p>
+                <div class="bg-blue-50 border-l-4 border-rio p-4 mb-6">
+                    <p class="text-rio font-medium">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Puedes abrir el mapa en Google Maps para navegación GPS haciendo clic en cualquier punto.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<div id="map"></div>
+        <!-- Controles del mapa -->
+        <section class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+            <!-- Controles de capas -->
+            <div class="lg:col-span-1">
+                <div class="map-controls">
+                    <h3 class="text-lg font-bold text-naturaleza mb-4">
+                        <i class="fas fa-layer-group mr-2"></i>Capas
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="layer-control">
+                            <input type="checkbox" id="senderos-layer" class="layer-checkbox" checked>
+                            <label for="senderos-layer" class="text-sm font-medium text-gray-700">Senderos</label>
+                        </div>
+                        <div class="layer-control">
+                            <input type="checkbox" id="puntos-layer" class="layer-checkbox" checked>
+                            <label for="puntos-layer" class="text-sm font-medium text-gray-700">Puntos de interés</label>
+                        </div>
+                        <div class="layer-control">
+                            <input type="checkbox" id="estacionamiento-layer" class="layer-checkbox" checked>
+                            <label for="estacionamiento-layer" class="text-sm font-medium text-gray-700">Estacionamientos</label>
+                        </div>
+                        <div class="layer-control">
+                            <input type="checkbox" id="servicios-layer" class="layer-checkbox" checked>
+                            <label for="servicios-layer" class="text-sm font-medium text-gray-700">Servicios</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Leyenda -->
+                <div class="legend mt-4">
+                    <h4 class="text-md font-bold text-naturaleza mb-3">
+                        <i class="fas fa-list mr-2"></i>Leyenda
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #2D5016;"></div>
+                            <span class="text-sm">Inicio de sendero</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #DC2626;"></div>
+                            <span class="text-sm">Final de sendero</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #F59E0B;"></div>
+                            <span class="text-sm">Punto de interés</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #2563EB;"></div>
+                            <span class="text-sm">Estacionamiento</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="route-line" style="background-color: #10B981;"></div>
+                            <span class="text-sm">Sendero baja dificultad</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="route-line" style="background-color: #F59E0B;"></div>
+                            <span class="text-sm">Sendero media dificultad</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="route-line" style="background-color: #EF4444;"></div>
+                            <span class="text-sm">Sendero alta dificultad</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mapa -->
+            <div class="lg:col-span-3">
+                <div id="map" class="map-container"></div>
+            </div>
+        </section>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <!-- Información adicional -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Instrucciones de uso -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-naturaleza mb-4">
+                    <i class="fas fa-compass mr-2"></i>Cómo usar el mapa
+                </h3>
+                <div class="space-y-3 text-sm text-gray-600">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-hand-pointer text-naturaleza mt-1"></i>
+                        <div>
+                            <strong>Haz clic</strong> en cualquier marcador para ver información detallada
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-mouse text-naturaleza mt-1"></i>
+                        <div>
+                            <strong>Arrastra</strong> el mapa para explorar diferentes áreas
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-search-plus text-naturaleza mt-1"></i>
+                        <div>
+                            <strong>Zoom</strong> con el scroll del mouse o los botones del mapa
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-layer-group text-naturaleza mt-1"></i>
+                        <div>
+                            <strong>Activa/desactiva</strong> las capas según lo que quieras ver
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas del mapa -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-naturaleza mb-4">
+                    <i class="fas fa-chart-bar mr-2"></i>Estadísticas
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-3xl font-bold text-naturaleza mb-1">3</div>
+                        <div class="text-sm text-gray-600">Senderos</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-3xl font-bold text-rio mb-1">12</div>
+                        <div class="text-sm text-gray-600">Puntos de interés</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-3xl font-bold text-accion mb-1">5</div>
+                        <div class="text-sm text-gray-600">Estacionamientos</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <div class="text-3xl font-bold text-ranking mb-1">8</div>
+                        <div class="text-sm text-gray-600">Servicios</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-<script>
+    <!-- Footer -->
+    <footer class="bg-naturaleza text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Municipalidad de Guardia Mitre</h4>
+                    <p class="text-green-200 text-sm">
+                        Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contacto</h4>
+                    <p class="text-green-200 text-sm">
+                        Para más información sobre los senderos y actividades.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-green-700 mt-8 pt-4 text-center">
+                <p class="text-green-200 text-sm">
+                    © 2024 Municipalidad de Guardia Mitre. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
 
-var map = L.map('map').setView([-40.43, -63.67], 14);
+    <!-- Scripts -->
+    <script src="../js/main.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Coordenadas aproximadas de Guardia Mitre
+        const GUARDIA_MITRE_COORDS = [-40.7833, -64.2667];
+        
+        // Datos de los senderos
+        const senderosData = [
+            {
+                id: 'sendero-rio',
+                nombre: 'Sendero del Río',
+                dificultad: 'baja',
+                color: '#10B981',
+                inicio: [-40.7833, -64.2667],
+                fin: [-40.7867, -64.2701],
+                coordenadas: [[-40.7833, -64.2667], [-40.7845, -64.2689], [-40.7867, -64.2701]],
+                distancia: 2.5,
+                duracion: 45,
+                descripcion: 'Recorrido costero con vistas al río Negro'
+            },
+            {
+                id: 'sendero-selva',
+                nombre: 'Sendero de la Selva',
+                dificultad: 'media',
+                color: '#F59E0B',
+                inicio: [-40.7850, -64.2650],
+                fin: [-40.7890, -64.2690],
+                coordenadas: [[-40.7850, -64.2650], [-40.7870, -64.2670], [-40.7890, -64.2690]],
+                distancia: 4.2,
+                duracion: 90,
+                descripcion: 'Inmersión en la vegetación nativa'
+            },
+            {
+                id: 'sendero-cumbres',
+                nombre: 'Sendero de las Cumbres',
+                dificultad: 'alta',
+                color: '#EF4444',
+                inicio: [-40.7820, -64.2640],
+                fin: [-40.7880, -64.2700],
+                coordenadas: [[-40.7820, -64.2640], [-40.7840, -64.2660], [-40.7880, -64.2700]],
+                distancia: 6.8,
+                duracion: 150,
+                descripcion: 'Desafiante ascenso con vistas panorámicas'
+            }
+        ];
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-attribution:'© OpenStreetMap'
-}).addTo(map);
+        // Puntos de interés
+        const puntosInteres = [
+            {
+                id: 'mirador-rio',
+                nombre: 'Mirador del Río',
+                tipo: 'mirador',
+                coordenadas: [-40.7850, -64.2680],
+                descripcion: 'Excelente vista panorámica del río Negro'
+            },
+            {
+                id: 'arbol-centenario',
+                nombre: 'Árbol Centenario',
+                tipo: 'punto-natural',
+                coordenadas: [-40.7860, -64.2660],
+                descripcion: 'Ejemplar de arrayán con más de 100 años'
+            },
+            {
+                id: 'zona-picnic',
+                nombre: 'Zona de Picnic',
+                tipo: 'servicio',
+                coordenadas: [-40.7840, -64.2670],
+                descripcion: 'Área con mesas y asadores'
+            },
+            {
+                id: 'cumbre-mirador',
+                nombre: 'Cumbre del Mirador',
+                tipo: 'mirador',
+                coordenadas: [-40.7860, -64.2690],
+                descripcion: 'Vista 360° del valle y cordillera'
+            }
+        ];
 
-// Inicio del sendero
-L.marker([-40.43, -63.67]).addTo(map)
-.bindPopup("Inicio del Sendero");
+        // Estacionamientos y servicios
+        const estacionamientos = [
+            {
+                nombre: 'Estacionamiento Principal',
+                coordenadas: [-40.7835, -64.2665],
+                capacidad: 30
+            },
+            {
+                nombre: 'Estacionamiento Sendero del Río',
+                coordenadas: [-40.7840, -64.2685],
+                capacidad: 15
+            },
+            {
+                nombre: 'Estacionamiento Montaña',
+                coordenadas: [-40.7815, -64.2635],
+                capacidad: 20
+            }
+        ];
 
-// Fin del sendero
-L.marker([-40.435, -63.675]).addTo(map)
-.bindPopup("Fin del Sendero");
+        // Inicializar el mapa
+        let map;
+        let layers = {
+            senderos: [],
+            puntos: [],
+            estacionamientos: [],
+            servicios: []
+        };
 
-// Ruta del sendero
-var ruta = [
-[-40.43,-63.67],
-[-40.432,-63.671],
-[-40.433,-63.672],
-[-40.435,-63.675]
-];
+        function initMap() {
+            // Crear el mapa
+            map = L.map('map').setView(GUARDIA_MITRE_COORDS, 14);
 
-L.polyline(ruta,{color:'green',weight:4}).addTo(map);
+            // Agregar capa de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-</script>
+            // Agregar controles de navegación
+            L.control.scale().addTo(map);
 
+            // Agregar senderos al mapa
+            agregarSenderos();
+            agregarPuntosInteres();
+            agregarEstacionamientos();
+            agregarServicios();
+
+            // Configurar eventos de capas
+            configurarEventosCapas();
+
+            // Ajustar vista para mostrar todos los elementos
+            ajustarVista();
+        }
+
+        function agregarSenderos() {
+            senderosData.forEach(sendero => {
+                // Crear línea del sendero
+                const polyline = L.polyline(sendero.coordenadas, {
+                    color: sendero.color,
+                    weight: 4,
+                    opacity: 0.8
+                });
+
+                // Agregar tooltip
+                polyline.bindTooltip(`
+                    <div class="text-center">
+                        <strong>${sendero.nombre}</strong><br>
+                        <small>${sendero.distancia}km • ${sendero.duracion}min</small>
+                    </div>
+                `, {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -10]
+                });
+
+                // Agregar popup con información detallada
+                polyline.bindPopup(`
+                    <div class="popup-title">${sendero.nombre}</div>
+                    <div class="popup-info">${sendero.descripcion}</div>
+                    <div class="popup-info">
+                        <i class="fas fa-route"></i> ${sendero.distancia}km • 
+                        <i class="fas fa-clock"></i> ${sendero.duracion}min • 
+                        <i class="fas fa-mountain"></i> ${sendero.dificultad}
+                    </div>
+                    <div class="popup-buttons">
+                        <a href="../senderos/index.html#${sendero.id}" class="popup-btn popup-btn-primary">
+                            <i class="fas fa-info-circle mr-1"></i>Más info
+                        </a>
+                        <a href="../tiempos/index.html?sendero=${sendero.id}" class="popup-btn popup-btn-secondary">
+                            <i class="fas fa-stopwatch mr-1"></i>Registrar tiempo
+                        </a>
+                    </div>
+                `);
+
+                layers.senderos.push(polyline);
+            });
+
+            // Agregar al mapa por defecto
+            layers.senderos.forEach(layer => map.addLayer(layer));
+        }
+
+        function agregarPuntosInteres() {
+            puntosInteres.forEach(punto => {
+                const marker = L.marker(punto.coordenadas, {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background-color: #F59E0B; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    })
+                });
+
+                marker.bindPopup(`
+                    <div class="popup-title">${punto.nombre}</div>
+                    <div class="popup-info">${punto.descripcion}</div>
+                    <div class="popup-info">
+                        <i class="fas fa-map-marker-alt"></i> ${punto.coordenadas[0].toFixed(4)}, ${punto.coordenadas[1].toFixed(4)}
+                    </div>
+                    <div class="popup-buttons">
+                        <button onclick="abrirGoogleMaps(${punto.coordenadas[0]}, ${punto.coordenadas[1]})" class="popup-btn popup-btn-primary">
+                            <i class="fas fa-directions mr-1"></i>Cómo llegar
+                        </button>
+                    </div>
+                `);
+
+                layers.puntos.push(marker);
+            });
+
+            // Agregar al mapa por defecto
+            layers.puntos.forEach(layer => map.addLayer(layer));
+        }
+
+        function agregarEstacionamientos() {
+            estacionamientos.forEach(est => {
+                const marker = L.marker(est.coordenadas, {
+                    icon: L.divIcon({
+                        className: 'parking-marker',
+                        html: `<div style="background-color: #2563EB; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 8px;"><i class="fas fa-parking"></i></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    })
+                });
+
+                marker.bindPopup(`
+                    <div class="popup-title">${est.nombre}</div>
+                    <div class="popup-info">
+                        <i class="fas fa-car"></i> Capacidad: ${est.capacidad} vehículos
+                    </div>
+                    <div class="popup-info">
+                        <i class="fas fa-map-marker-alt"></i> ${est.coordenadas[0].toFixed(4)}, ${est.coordenadas[1].toFixed(4)}
+                    </div>
+                    <div class="popup-buttons">
+                        <button onclick="abrirGoogleMaps(${est.coordenadas[0]}, ${est.coordenadas[1]})" class="popup-btn popup-btn-primary">
+                            <i class="fas fa-directions mr-1"></i>Cómo llegar
+                        </button>
+                    </div>
+                `);
+
+                layers.estacionamientos.push(marker);
+            });
+
+            // Agregar al mapa por defecto
+            layers.estacionamientos.forEach(layer => map.addLayer(layer));
+        }
+
+        function agregarServicios() {
+            // Agregar baños, áreas de picnic, etc.
+            const servicios = [
+                {
+                    nombre: 'Baños Públicos',
+                    coordenadas: [-40.7845, -64.2675],
+                    tipo: 'baños',
+                    icono: '🚻'
+                },
+                {
+                    nombre: 'Área de Picnic',
+                    coordenadas: [-40.7840, -64.2670],
+                    tipo: 'picnic',
+                    icono: '🧺'
+                },
+                {
+                    nombre: 'Centro de Visitantes',
+                    coordenadas: [-40.7838, -64.2668],
+                    tipo: 'informacion',
+                    icono: '🏛️'
+                }
+            ];
+
+            servicios.forEach(servicio => {
+                const marker = L.marker(servicio.coordenadas, {
+                    icon: L.divIcon({
+                        className: 'service-marker',
+                        html: `<div style="background-color: #F59E0B; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px;">${servicio.icono}</div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    })
+                });
+
+                marker.bindPopup(`
+                    <div class="popup-title">${servicio.nombre}</div>
+                    <div class="popup-info">
+                        <i class="fas fa-map-marker-alt"></i> ${servicio.coordenadas[0].toFixed(4)}, ${servicio.coordenadas[1].toFixed(4)}
+                    </div>
+                    <div class="popup-buttons">
+                        <button onclick="abrirGoogleMaps(${servicio.coordenadas[0]}, ${servicio.coordenadas[1]})" class="popup-btn popup-btn-primary">
+                            <i class="fas fa-directions mr-1"></i>Cómo llegar
+                        </button>
+                    </div>
+                `);
+
+                layers.servicios.push(marker);
+            });
+
+            // Agregar al mapa por defecto
+            layers.servicios.forEach(layer => map.addLayer(layer));
+        }
+
+        function configurarEventosCapas() {
+            // Eventos para mostrar/ocultar capas
+            document.getElementById('senderos-layer').addEventListener('change', function() {
+                layers.senderos.forEach(layer => {
+                    if (this.checked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            });
+
+            document.getElementById('puntos-layer').addEventListener('change', function() {
+                layers.puntos.forEach(layer => {
+                    if (this.checked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            });
+
+            document.getElementById('estacionamiento-layer').addEventListener('change', function() {
+                layers.estacionamientos.forEach(layer => {
+                    if (this.checked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            });
+
+            document.getElementById('servicios-layer').addEventListener('change', function() {
+                layers.servicios.forEach(layer => {
+                    if (this.checked) {
+                        map.addLayer(layer);
+                    } else {
+                        map.removeLayer(layer);
+                    }
+                });
+            });
+        }
+
+        function ajustarVista() {
+            // Crear grupo con todos los elementos
+            const group = new L.featureGroup([
+                ...layers.senderos,
+                ...layers.puntos,
+                ...layers.estacionamientos,
+                ...layers.servicios
+            ]);
+
+            // Ajustar vista para mostrar todos los elementos
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
+
+        function abrirGoogleMaps(lat, lng) {
+            const url = `https://www.google.com/maps?q=${lat},${lng}`;
+            window.open(url, '_blank');
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            
+            // Si hay parámetros en la URL, centrar en un sendero específico
+            const urlParams = new URLSearchParams(window.location.search);
+            const senderoId = urlParams.get('sendero');
+            
+            if (senderoId) {
+                const sendero = senderosData.find(s => s.id === senderoId);
+                if (sendero) {
+                    setTimeout(() => {
+                        map.setView(sendero.inicio, 16);
+                        // Abrir popup del sendero
+                        const senderoLayer = layers.senderos.find(layer => 
+                            layer.getLatLngs()[0].lat === sendero.coordenadas[0][0] &&
+                            layer.getLatLngs()[0].lng === sendero.coordenadas[0][1]
+                        );
+                        if (senderoLayer) {
+                            senderoLayer.openPopup();
+                        }
+                    }, 1000);
+                }
+            }
+        });
+
+        // Detectar cambios de tamaño de ventana
+        window.addEventListener('resize', function() {
+            if (map) {
+                map.invalidateSize();
+            }
+        });
+    </script>
 </body>
 </html>
