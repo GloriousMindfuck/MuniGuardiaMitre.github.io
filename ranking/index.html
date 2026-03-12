@@ -1,42 +1,812 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Ranking del Sendero</title>
-
-<style>
-
-body{
-font-family:Arial;
-text-align:center;
-padding:20px;
-}
-
-iframe{
-width:100%;
-max-width:900px;
-height:600px;
-border:none;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking - Guardia Mitre</title>
+    <meta name="description" content="Consulta el ranking de los mejores tiempos en los senderos de Guardia Mitre. ¿Eres el más rápido?">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/estilos.css">
+    
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'naturaleza': '#2D5016',
+                        'rio': '#2563EB',
+                        'accion': '#F97316',
+                        'ranking': '#F59E0B',
+                        'naturaleza-claro': '#4ADE80',
+                        'rio-claro': '#60A5FA'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Estilos específicos para el ranking */
+        .ranking-table {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ranking-header {
+            background: linear-gradient(135deg, var(--color-ranking), #FCD34D);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .ranking-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        
+        .ranking-row:hover {
+            background-color: #F9FAFB;
+            transform: translateX(4px);
+        }
+        
+        .ranking-row:nth-child(even) {
+            background-color: #F9FAFB;
+        }
+        
+        .ranking-position {
+            font-weight: 700;
+            font-size: 1.25rem;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .ranking-position.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .ranking-position.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .ranking-position.bronze {
+            background: linear-gradient(135deg, #CD7F32, #A0522D);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+                    justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .ranking-time {
+            font-weight: 600;
+            color: var(--color-accion);
+            font-size: 1.1rem;
+        }
+        
+        .ranking-sendero {
+            color: var(--color-naturaleza);
+            font-weight: 500;
+        }
+        
+        .ranking-date {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, var(--color-ranking), #FCD34D);
+            color: white;
+            border-radius: 1rem;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .podium-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .podium-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .podium-position {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+        
+        .podium-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .podium-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+        .podium-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); }
+        
+        .podium-time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-accion);
+            margin-bottom: 0.5rem;
+        }
+        
+        .podium-name {
+            font-weight: 600;
+            color: var(--color-naturaleza);
+            margin-bottom: 0.25rem;
+        }
+        
+        .podium-sendero {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+        
+        @media (max-width: 768px) {
+            .ranking-table {
+                font-size: 0.875rem;
+            }
+            
+            .ranking-position {
+                font-size: 1rem;
+                width: 50px;
+            }
+            
+            .ranking-time {
+                font-size: 1rem;
+            }
+            
+            .podium {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .podium-item {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
+<body class="bg-green-50 font-sans">
+    <!-- Header -->
+    <header class="bg-naturaleza text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-trophy text-3xl text-ranking"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Ranking de Tiempos</h1>
+                        <p class="text-green-200 text-sm">Guardia Mitre - Río Negro, Argentina</p>
+                    </div>
+                </div>
+                <a href="../index.html" class="text-white hover:text-ranking transition-colors">
+                    <i class="fas fa-home text-2xl"></i>
+                </a>
+            </div>
+            
+            <!-- Navegación -->
+            <nav class="mt-4">
+                <ul class="flex flex-wrap gap-2">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../senderos/index.html" class="nav-link">Senderos</a></li>
+                    <li><a href="../mapa/index.html" class="nav-link">Mapa</a></li>
+                    <li><a href="../tiempos/index.html" class="nav-link">Registrar Tiempo</a></li>
+                    <li><a href="index.html" class="nav-link active">Ranking</a></li>
+                    <li><a href="../flora/index.html" class="nav-link">Flora y Fauna</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-4xl font-bold text-naturaleza mb-4">
+                    <i class="fas fa-crown mr-3 text-ranking"></i>Ranking de Tiempos
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    Consulta los mejores tiempos registrados en cada sendero. ¿Podrás superar los récords actuales?
+                </p>
+                <div class="bg-yellow-50 border-l-4 border-ranking p-4 mb-6">
+                    <p class="text-ranking font-medium">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        El ranking se actualiza automáticamente cada 15 minutos con los nuevos registros.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<h1>Ranking de Tiempos</h1>
+        <!-- Estadísticas generales -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stats-card">
+                <div class="stats-number" id="total-registros">0</div>
+                <div class="stats-label">Total de registros</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-number" id="total-participantes">0</div>
+                <div class="stats-label">Participantes</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-number" id="mejor-tiempo">--</div>
+                <div class="stats-label">Mejor tiempo general</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-number" id="ultima-actualizacion">--</div>
+                <div class="stats-label">Última actualización</div>
+            </div>
+        </section>
 
-<p>Mejores tiempos registrados por visitantes</p>
+        <!-- Filtros -->
+        <section class="filter-section p-6 mb-8">
+            <h3 class="text-xl font-bold text-naturaleza mb-4">
+                <i class="fas fa-filter mr-2"></i>Filtrar ranking
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="filtro-sendero" class="form-label">Sendero</label>
+                    <select id="filtro-sendero" class="form-select">
+                        <option value="">Todos los senderos</option>
+                        <option value="sendero-rio">Sendero del Río</option>
+                        <option value="sendero-selva">Sendero de la Selva</option>
+                        <option value="sendero-cumbres">Sendero de las Cumbres</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtro-mes" class="form-label">Mes</label>
+                    <select id="filtro-mes" class="form-select">
+                        <option value="">Todos los meses</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtro-top" class="form-label">Mostrar</label>
+                    <select id="filtro-top" class="form-select">
+                        <option value="10">Top 10</option>
+                        <option value="25">Top 25</option>
+                        <option value="50">Top 50</option>
+                        <option value="100">Top 100</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="aplicarFiltros()" class="btn btn-ranking w-full">
+                        <i class="fas fa-search mr-2"></i>Aplicar
+                    </button>
+                </div>
+            </div>
+        </section>
 
-<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSb00cikC86w7CHKZVuXSWL0jdly8emQTkjmLa6TQveurjN1i7BCH7O8sMvSzeINsKbpSK0uW1riu38/pubhtml"></iframe>
+        <!-- Podio de ganadores -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6 text-center">
+                <i class="fas fa-medal mr-2"></i>Podio de Campeones
+            </h3>
+            <div id="podium-container" class="podium">
+                <!-- El podio se cargará dinámicamente aquí -->
+            </div>
+        </section>
 
-<br><br>
+        <!-- Ranking completo -->
+        <section class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6">
+                <i class="fas fa-list-ol mr-2"></i>Ranking Completo
+            </h3>
+            <div id="ranking-container">
+                <!-- El ranking se cargará dinámicamente aquí -->
+            </div>
+        </section>
 
-<a href="../">Volver</a>
+        <!-- Información adicional -->
+        <section class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h4 class="text-lg font-bold text-naturaleza mb-4">
+                    <i class="fas fa-chart-line mr-2"></i>Estadísticas por Sendero
+                </h4>
+                <div id="estadisticas-senderos" class="space-y-3">
+                    <!-- Las estadísticas se cargarán dinámicamente aquí -->
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h4 class="text-lg font-bold text-naturaleza mb-4">
+                    <i class="fas fa-trophy mr-2"></i>Récores Actuales
+                </h4>
+                <div id="records-actuales" class="space-y-3">
+                    <!-- Los récords se cargarán dinámicamente aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
 
+    <!-- Footer -->
+    <footer class="bg-naturaleza text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Municipalidad de Guardia Mitre</h4>
+                    <p class="text-green-200 text-sm">
+                        Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contacto</h4>
+                    <p class="text-green-200 text-sm">
+                        Para más información sobre los senderos y actividades.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-green-700 mt-8 pt-4 text-center">
+                <p class="text-green-200 text-sm">
+                    © 2024 Municipalidad de Guardia Mitre. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/main.js"></script>
+    
+    <script>
+        // Datos de ejemplo (en producción vendrían de Google Sheets)
+        const rankingEjemplo = [
+            {
+                nombre: 'Lucas R.',
+                sendero: 'sendero-rio',
+                tiempo: 32,
+                fecha: '2024-03-11',
+                posicion: 1
+            },
+            {
+                nombre: 'Carlos M.',
+                sendero: 'sendero-rio',
+                tiempo: 38,
+                fecha: '2024-03-10',
+                posicion: 2
+            },
+            {
+                nombre: 'Ana L.',
+                sendero: 'sendero-rio',
+                tiempo: 41,
+                fecha: '2024-03-09',
+                posicion: 3
+            },
+            {
+                nombre: 'María S.',
+                sendero: 'sendero-selva',
+                tiempo: 78,
+                fecha: '2024-03-09',
+                posicion: 1
+            },
+            {
+                nombre: 'Pedro G.',
+                sendero: 'sendero-selva',
+                tiempo: 82,
+                fecha: '2024-03-08',
+                posicion: 2
+            },
+            {
+                nombre: 'Laura M.',
+                sendero: 'sendero-cumbres',
+                tiempo: 128,
+                fecha: '2024-03-07',
+                posicion: 1
+            },
+            {
+                nombre: 'Juan P.',
+                sendero: 'sendero-cumbres',
+                tiempo: 135,
+                fecha: '2024-03-06',
+                posicion: 2
+            }
+        ];
+
+        // Configuración
+        let rankingActual = [...rankingEjemplo];
+        let ultimaActualizacion = new Date();
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarRanking();
+            actualizarEstadisticas();
+            actualizarFechaActualizacion();
+            
+            // Actualizar cada 15 minutos (simulado)
+            setInterval(() => {
+                ultimaActualizacion = new Date();
+                actualizarFechaActualizacion();
+                // En producción aquí se recargarían los datos de Google Sheets
+            }, 15 * 60 * 1000);
+        });
+
+        // Función para cargar y mostrar el ranking
+        function cargarRanking() {
+            // Obtener datos de localStorage (simulando Google Sheets)
+            const registrosLocales = LocalData.get('tiempos-registrados') || [];
+            
+            // Combinar con datos de ejemplo
+            const todosLosDatos = [...rankingActual, ...registrosLocales];
+            
+            // Ordenar por tiempo (menor tiempo = mejor posición)
+            const rankingOrdenado = todosLosDatos.sort((a, b) => a.tiempo - b.tiempo);
+            
+            // Aplicar filtros
+            const filtroSendero = document.getElementById('filtro-sendero').value;
+            const filtroMes = document.getElementById('filtro-mes').value;
+            const filtroTop = parseInt(document.getElementById('filtro-top').value);
+            
+            let rankingFiltrado = rankingOrdenado;
+            
+            if (filtroSendero) {
+                rankingFiltrado = rankingFiltrado.filter(r => r.sendero === filtroSendero);
+            }
+            
+            if (filtroMes) {
+                rankingFiltrado = rankingFiltrado.filter(r => {
+                    const fecha = new Date(r.fecha);
+                    return fecha.getMonth() + 1 === parseInt(filtroMes);
+                });
+            }
+            
+            // Limitar a los primeros N
+            rankingFiltrado = rankingFiltrado.slice(0, filtroTop);
+            
+            // Actualizar posiciones
+            rankingFiltrado.forEach((item, index) => {
+                item.posicion = index + 1;
+            });
+            
+            // Mostrar podio (top 3)
+            mostrarPodio(rankingFiltrado.slice(0, 3));
+            
+            // Mostrar ranking completo
+            mostrarRankingCompleto(rankingFiltrado);
+            
+            // Actualizar estadísticas
+            actualizarEstadisticas(rankingFiltrado);
+        }
+
+        // Función para mostrar el podio
+        function mostrarPodio(top3) {
+            const container = document.getElementById('podium-container');
+            container.innerHTML = '';
+            
+            if (top3.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4"></i>
+                        <p>Aún no hay registros en este ranking</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Reordenar para mostrar 2º, 1º, 3º (estilo podio)
+            const ordenPodio = [];
+            if (top3.length >= 2) ordenPodio.push(top3[1]); // Segundo
+            if (top3.length >= 1) ordenPodio.push(top3[0]); // Primero
+            if (top3.length >= 3) ordenPodio.push(top3[2]); // Tercero
+            
+            ordenPodio.forEach((item, index) => {
+                const nombreSendero = {
+                    'sendero-rio': 'Sendero del Río',
+                    'sendero-selva': 'Sendero de la Selva',
+                    'sendero-cumbres': 'Sendero de las Cumbres'
+                }[item.sendero] || 'Sendero desconocido';
+                
+                const tiempoFormateado = Utils.formatTime(item.tiempo);
+                let posicionReal;
+                if (top3.length >= 3) {
+                    posicionReal = index === 0 ? 2 : index === 1 ? 1 : 3;
+                } else if (top3.length === 2) {
+                    posicionReal = index === 0 ? 2 : 1;
+                } else {
+                    posicionReal = 1;
+                }
+                
+                const podioHTML = `
+                    <div class="podium-item">
+                        <div class="podium-position podium-${posicionReal}">${posicionReal}º</div>
+                        <div class="podium-time">${tiempoFormateado}</div>
+                        <div class="podium-name">${item.nombre}</div>
+                        <div class="podium-sendero">${nombreSendero}</div>
+                    </div>
+                `;
+                
+                container.innerHTML += podioHTML;
+            });
+        }
+
+        // Función para mostrar el ranking completo
+        function mostrarRankingCompleto(ranking) {
+            const container = document.getElementById('ranking-container');
+            
+            if (ranking.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-list-ol text-4xl mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-600 mb-2">No hay registros</h3>
+                        <p class="text-gray-500 mb-4">Aún no hay tiempos registrados que coincidan con los filtros seleccionados.</p>
+                        <a href="../tiempos/index.html" class="btn btn-accion">
+                            <i class="fas fa-stopwatch mr-2"></i>Registrar mi tiempo
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            let tablaHTML = `
+                <div class="ranking-table">
+                    <div class="ranking-header grid grid-cols-5 gap-4 p-4 text-sm uppercase tracking-wide">
+                        <div class="text-center">Posición</div>
+                        <div>Nombre</div>
+                        <div>Sendero</div>
+                        <div class="text-center">Tiempo</div>
+                        <div class="text-center">Fecha</div>
+                    </div>
+                    <div class="ranking-body">
+            `;
+            
+            ranking.forEach((item, index) => {
+                const nombreSendero = {
+                    'sendero-rio': 'Sendero del Río',
+                    'sendero-selva': 'Sendero de la Selva',
+                    'sendero-cumbres': 'Sendero de las Cumbres'
+                }[item.sendero] || 'Sendero desconocido';
+                
+                const tiempoFormateado = Utils.formatTime(item.tiempo);
+                const fechaFormateada = new Date(item.fecha).toLocaleDateString('es-AR');
+                
+                let positionClass = '';
+                let positionIcon = '';
+                
+                if (item.posicion === 1) {
+                    positionClass = 'gold';
+                    positionIcon = '👑';
+                } else if (item.posicion === 2) {
+                    positionClass = 'silver';
+                    positionIcon = '🥈';
+                } else if (item.posicion === 3) {
+                    positionClass = 'bronze';
+                    positionIcon = '🥉';
+                }
+                
+                tablaHTML += `
+                    <div class="ranking-row grid grid-cols-5 gap-4 p-4 items-center">
+                        <div class="ranking-position ${positionClass}">
+                            ${positionIcon || item.posicion}
+                        </div>
+                        <div class="font-medium text-naturaleza">${item.nombre}</div>
+                        <div class="ranking-sendero">${nombreSendero}</div>
+                        <div class="ranking-time text-center">${tiempoFormateado}</div>
+                        <div class="ranking-date text-center">${fechaFormateada}</div>
+                    </div>
+                `;
+            });
+            
+            tablaHTML += `
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = tablaHTML;
+        }
+
+        // Función para actualizar estadísticas
+        function actualizarEstadisticas(ranking = rankingActual) {
+            // Estadísticas generales
+            const totalRegistros = ranking.length;
+            const participantesUnicos = new Set(ranking.map(r => r.nombre)).size;
+            const mejorTiempo = ranking.length > 0 ? Math.min(...ranking.map(r => r.tiempo)) : null;
+            
+            document.getElementById('total-registros').textContent = totalRegistros;
+            document.getElementById('total-participantes').textContent = participantesUnicos;
+            document.getElementById('mejor-tiempo').textContent = mejorTiempo ? Utils.formatTime(mejorTiempo) : '--';
+            
+            // Estadísticas por sendero
+            const estadisticasPorSendero = {};
+            const nombresSenderos = {
+                'sendero-rio': 'Sendero del Río',
+                'sendero-selva': 'Sendero de la Selva',
+                'sendero-cumbres': 'Sendero de las Cumbres'
+            };
+            
+            ranking.forEach(item => {
+                if (!estadisticasPorSendero[item.sendero]) {
+                    estadisticasPorSendero[item.sendero] = {
+                        nombre: nombresSenderos[item.sendero] || item.sendero,
+                        registros: 0,
+                        mejorTiempo: Infinity,
+                        peorTiempo: 0,
+                        totalTiempo: 0
+                    };
+                }
+                
+                const stats = estadisticasPorSendero[item.sendero];
+                stats.registros++;
+                stats.mejorTiempo = Math.min(stats.mejorTiempo, item.tiempo);
+                stats.peorTiempo = Math.max(stats.peorTiempo, item.tiempo);
+                stats.totalTiempo += item.tiempo;
+            });
+            
+            // Mostrar estadísticas por sendero
+            const containerEstadisticas = document.getElementById('estadisticas-senderos');
+            containerEstadisticas.innerHTML = '';
+            
+            Object.values(estadisticasPorSendero).forEach(stats => {
+                const promedio = Math.round(stats.totalTiempo / stats.registros);
+                
+                containerEstadisticas.innerHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                        <div>
+                            <div class="font-medium text-naturaleza">${stats.nombre}</div>
+                            <div class="text-sm text-gray-500">${stats.registros} registros</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-accion">${Utils.formatTime(stats.mejorTiempo)}</div>
+                            <div class="text-xs text-gray-500">Promedio: ${Utils.formatTime(promedio)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Récords actuales
+            const containerRecords = document.getElementById('records-actuales');
+            containerRecords.innerHTML = '';
+            
+            Object.values(estadisticasPorSendero).forEach(stats => {
+                containerRecords.innerHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                        <div class="font-medium text-naturaleza">${stats.nombre}</div>
+                        <div class="font-bold text-ranking">${Utils.formatTime(stats.mejorTiempo)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Función para actualizar fecha de actualización
+        function actualizarFechaActualizacion() {
+            const ahora = new Date();
+            const formatoHora = ahora.toLocaleTimeString('es-AR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('ultima-actualizacion').textContent = formatoHora;
+        }
+
+        // Función para aplicar filtros
+        function aplicarFiltros() {
+            cargarRanking();
+            Utils.showToast('Filtros aplicados', 'success');
+        }
+
+        // Función para exportar ranking
+        function exportarRanking() {
+            const ranking = rankingActual;
+            if (ranking.length === 0) {
+                Utils.showToast('No hay datos para exportar', 'warning');
+                return;
+            }
+            
+            // Convertir a CSV
+            const csv = convertirRankingACSV(ranking);
+            descargarArchivo(csv, 'ranking-guardia-mitre.csv', 'text/csv');
+        }
+
+        function convertirRankingACSV(ranking) {
+            const cabeceras = ['Posición', 'Nombre', 'Sendero', 'Tiempo', 'Fecha'];
+            const filas = ranking.map((item, index) => [
+                index + 1,
+                item.nombre,
+                item.sendero,
+                item.tiempo,
+                item.fecha
+            ]);
+            
+            return [cabeceras, ...filas].map(fila => fila.join(',')).join('\n');
+        }
+
+        function descargarArchivo(contenido, nombre, tipo) {
+            const blob = new Blob([contenido], { type: tipo });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nombre;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
 </body>
 </html>
