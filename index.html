@@ -40,15 +40,13 @@
     </script>
 </head>
 <body class="bg-green-50 font-sans">
-    <!-- Header -->
+        <!-- Header -->
     <header class="bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-lg">
         <div class="container mx-auto px-4 py-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <!-- Logo Municipalidad -->
                     <img src="images/mi-logo.png" alt="Logo Guardia Mitre" class="w-16 h-16 object-contain">
-                        </div>
-                    </div>
                     <div>
                         <h1 class="text-2xl font-bold">Municipalidad de Guardia Mitre</h1>
                         <p class="text-blue-100 text-sm">Río Negro, Argentina</p>
@@ -58,6 +56,22 @@
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
+            
+            <!-- Navegación principal -->
+            <nav id="main-nav" class="hidden lg:block mt-4 lg:mt-0">
+                <ul class="flex flex-col lg:flex-row lg:space-x-6 space-y-2 lg:space-y-0">
+                    <li><a href="index.html" class="nav-link active">Inicio</a></li>
+                    <li><a href="senderos/index.html" class="nav-link">Senderos</a></li>
+                    <li><a href="mapa/index.html" class="nav-link">Mapa</a></li>
+                    <li><a href="tiempos/index.html" class="nav-link">Registrar Tiempo</a></li>
+                    <li><a href="ranking/index.html" class="nav-link">Ranking</a></li>
+                    <li><a href="flora/index.html" class="nav-link">Flora y Fauna</a></li>
+                    <li><a href="galeria/index.html" class="nav-link">Galería</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
             
             <!-- Navegación principal -->
             <nav id="main-nav" class="hidden lg:block mt-4 lg:mt-0">
@@ -238,19 +252,18 @@
         </section>
     </main>
 
-    <!-- Footer -->
+        <!-- Footer -->
     <footer class="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-8 mt-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
+                <div class="flex items-center space-x-4">
                     <img src="images/mi-logo.png" alt="Logo Guardia Mitre" class="w-12 h-12 object-contain">
-                            </div>
-                        </div>
+                    <div>
                         <h4 class="text-lg font-bold">Municipalidad de Guardia Mitre</h4>
+                        <p class="text-blue-100 text-sm">
+                            Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
+                        </p>
                     </div>
-                    <p class="text-blue-100 text-sm">
-                        Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
-                    </p>
                 </div>
                 <div>
                     <h4 class="text-lg font-bold mb-4">Contacto</h4>
