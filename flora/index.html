@@ -1,33 +1,912 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Flora y Fauna</title>
-
-<link rel="stylesheet" href="/css/estilos.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flora y Fauna - Guardia Mitre</title>
+    <meta name="description" content="Descubre la flora y fauna de los senderos de Guardia Mitre. Aprende sobre especies nativas y cómo identificarlas con PlantNet e iNaturalist.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/estilos.css">
+    
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'naturaleza': '#2D5016',
+                        'rio': '#2563EB',
+                        'accion': '#F97316',
+                        'ranking': '#F59E0B',
+                        'naturaleza-claro': '#4ADE80',
+                        'rio-claro': '#60A5FA'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Estilos específicos para flora y fauna */
+        .especie-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .especie-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .especie-imagen {
+            height: 200px;
+            background: linear-gradient(135deg, var(--color-naturaleza), var(--color-naturaleza-claro));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .especie-imagen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .especie-card:hover .especie-imagen::before {
+            opacity: 1;
+        }
+        
+        .especie-content {
+            padding: 1.5rem;
+        }
+        
+        .especie-tipo {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tipo-flora {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .tipo-fauna {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .especie-nombre-comun {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-naturaleza);
+            margin-bottom: 0.25rem;
+        }
+        
+        .especie-nombre-cientifico {
+            font-style: italic;
+            color: #6B7280;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .especie-descripcion {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .especie-estado {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .estado-nativa {
+            color: #10B981;
+        }
+        
+        .estado-introducida {
+            color: #F59E0B;
+        }
+        
+        .estado-inv{
+            color: #EF4444;
+        }
+        
+        .herramienta-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .herramienta-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .herramienta-icono {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+                            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+        
+        .herramienta-plantnet {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        }
+        
+        .herramienta-inaturalist {
+            background: linear-gradient(135deg, #FF9800, #FFC107);
+        }
+        
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-naturaleza);
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            font-size: 1.25rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 2rem;
+            background: white;
+            color: #6B7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background-color: var(--color-naturaleza);
+            color: white;
+            border-color: var(--color-naturaleza);
+        }
+        
+        .integracion-card {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border: 2px solid var(--color-naturaleza);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .integracion-title {
+            color: var(--color-naturaleza);
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .integracion-description {
+            color: #374151;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .integracion-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--color-naturaleza);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .integracion-btn:hover {
+            background-color: #1F2937;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .especie-imagen {
+                height: 150px;
+                font-size: 3rem;
+            }
+            
+            .especie-content {
+                padding: 1rem;
+            }
+            
+            .filter-buttons {
+                gap: 0.25rem;
+            }
+            
+            .filter-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
+<body class="bg-green-50 font-sans">
+    <!-- Header -->
+    <header class="bg-naturaleza text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-leaf text-3xl text-naturaleza-claro"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Flora y Fauna</h1>
+                        <p class="text-green-200 text-sm">Guardia Mitre - Río Negro, Argentina</p>
+                    </div>
+                </div>
+                <a href="../index.html" class="text-white hover:text-naturaleza-claro transition-colors">
+                    <i class="fas fa-home text-2xl"></i>
+                </a>
+            </div>
+            
+            <!-- Navegación -->
+            <nav class="mt-4">
+                <ul class="flex flex-wrap gap-2">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../senderos/index.html" class="nav-link">Senderos</a></li>
+                    <li><a href="../mapa/index.html" class="nav-link">Mapa</a></li>
+                    <li><a href="../tiempos/index.html" class="nav-link">Registrar Tiempo</a></li>
+                    <li><a href="../ranking/index.html" class="nav-link">Ranking</a></li>
+                    <li><a href="index.html" class="nav-link active">Flora y Fauna</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-4xl font-bold text-naturaleza mb-4">
+                    Descubre la Biodiversidad
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    Explora la rica flora y fauna de los senderos de Guardia Mitre. Aprende a identificar especies 
+                    y contribuye al conocimiento científico con tus observaciones.
+                </p>
+                <div class="bg-green-100 border-l-4 border-naturaleza p-4 mb-6">
+                    <p class="text-naturaleza font-medium">
+                        <i class="fas fa-camera mr-2"></i>
+                        ¡Toma fotos de las especies que encuentres y ayuda a identificarlas!
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<header>
-<h1>Flora y Fauna</h1>
-</header>
+        <!-- Herramientas de identificación -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6 text-center">
+                <i class="fas fa-search mr-2"></i>Herramientas de Identificación
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- PlantNet -->
+                <div class="herramienta-card">
+                    <div class="herramienta-icono herramienta-plantnet">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-naturaleza mb-3">PlantNet</h4>
+                    <p class="text-gray-600 mb-4">
+                        Identifica plantas automáticamente con solo tomar una foto. 
+                        PlantNet utiliza reconocimiento visual para identificar especies vegetales.
+                    </p>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Identificación instantánea</div>
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Base de datos de especies locales</div>
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Guarda tus observaciones</div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="https://identify.plantnet.org/" target="_blank" class="btn btn-green">
+                            <i class="fas fa-external-link-alt mr-2"></i>Usar PlantNet
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- iNaturalist -->
+                <div class="herramienta-card">
+                    <div class="herramienta-icono herramienta-inaturalist">
+                        <i class="fas fa-binoculars"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-naturaleza mb-3">iNaturalist</h4>
+                    <p class="text-gray-600 mb-4">
+                        Red social para naturalistas donde puedes registrar y compartir observaciones 
+                        de plantas, animales y hongos con la comunidad científica.
+                    </p>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Comunidad científica</div>
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Identificación colaborativa</div>
+                        <div><i class="fas fa-check text-green-500 mr-2"></i>Contribuye a la ciencia</div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="https://www.inaturalist.org/" target="_blank" class="btn btn-green">
+                            <i class="fas fa-external-link-alt mr-2"></i>Usar iNaturalist
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<div class="container">
+        <!-- Integración con apps -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6 text-center">
+                <i class="fas fa-mobile-alt mr-2"></i>¿Cómo usar estas apps?
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="integracion-card">
+                    <div class="integracion-title">
+                        <i class="fas fa-camera mr-2"></i>1. Toma una foto
+                    </div>
+                    <div class="integracion-description">
+                        Toma una foto clara de la planta o animal que quieres identificar. 
+                        Intenta capturar características distintivas.
+                    </div>
+                </div>
+                
+                <div class="integracion-card">
+                    <div class="integracion-title">
+                        <i class="fas fa-upload mr-2"></i>2. Sube la foto
+                    </div>
+                    <div class="integracion-description">
+                        Sube la foto a PlantNet (para plantas) o iNaturalist (para cualquier ser vivo). 
+                        Las apps procesarán la imagen automáticamente.
+                    </div>
+                </div>
+                
+                <div class="integracion-card">
+                    <div class="integracion-title">
+                        <i class="fas fa-search mr-2"></i>3. Identifica
+                    </div>
+                    <div class="integracion-description">
+                        La app te mostrará sugerencias de especies. ¡Puedes ayudar a confirmar 
+                        identificaciones de otros usuarios también!
+                    </div>
+                </div>
+                
+                <div class="integracion-card">
+                    <div class="integracion-title">
+                        <i class="fas fa-share-alt mr-2"></i>4. Comparte
+                    </div>
+                    <div class="integracion-description">
+                        Comparte tus observaciones con la comunidad. Tus registros ayudan a 
+                        científicos a entender mejor la biodiversidad de la región.
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<p>Registrá plantas y animales observados durante el recorrido.</p>
+        <!-- Búsqueda y filtros -->
+        <section class="mb-12">
+            <div class="search-container mb-6">
+                <input type="text" id="busqueda" placeholder="Buscar especies por nombre común o científico..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <div class="filter-buttons mb-6">
+                <button class="filter-btn active" data-filtro="todos">Todas</button>
+                <button class="filter-btn" data-filtro="flora">🌱 Flora</button>
+                <button class="filter-btn" data-filtro="fauna">🦅 Fauna</button>
+                <button class="filter-btn" data-filtro="nativas">Nativas</button>
+                <button class="filter-btn" data-filtro="introducidas">Introducidas</button>
+            </div>
+        </section>
 
-<a class="boton verde2" href="LINK_INATURALIST">
-Abrir proyecto de observación
-</a>
+        <!-- Catálogo de especies -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6 text-center">
+                <i class="fas fa-list mr-2"></i>Catálogo de Especies
+            </h3>
+            <div id="especies-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Las especies se cargarán dinámicamente aquí -->
+            </div>
+        </section>
 
-</div>
+        <!-- Sección de identificación colaborativa -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-12">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6 text-center">
+                <i class="fas fa-users mr-2"></i>Identificación Colaborativa
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-lg font-bold text-naturaleza mb-3">¿No puedes identificar una especie?</h4>
+                    <p class="text-gray-600 mb-4">
+                        Si encuentras una especie que no puedes identificar con seguridad, 
+                        puedes subirla a iNaturalist con una identificación general (por ejemplo, "planta" o "insecto"). 
+                        La comunidad de naturalistas te ayudará a identificarla correctamente.
+                    </p>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-blue-800 text-sm">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Tip:</strong> Incluye varias fotos desde diferentes ángulos y 
+                            agrega información sobre el hábitat donde la encontraste.
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-naturaleza mb-3">¿Eres experto en algún grupo?</h4>
+                    <p class="text-gray-600 mb-4">
+                        Si tienes conocimientos sobre plantas, insectos, aves u otros grupos, 
+                        puedes ayudar a identificar las observaciones de otros usuarios. 
+                        ¡Tu conocimiento es muy valioso para la comunidad!
+                    </p>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-green-800 text-sm">
+                            <i class="fas fa-heart mr-2"></i>
+                            Tu ayuda permite que científicos y estudiantes puedan usar 
+                            estas observaciones para sus investigaciones.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<a class="volver" href="/">← Volver</a>
+        <!-- Observaciones recientes -->
+        <section class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6">
+                <i class="fas fa-history mr-2"></i>Observaciones Recientes
+            </h3>
+            <div id="observaciones-container" class="space-y-4">
+                <!-- Las observaciones se cargarán dinámicamente aquí -->
+            </div>
+            <div class="text-center mt-6">
+                <a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&taxon_id=any" target="_blank" class="btn btn-green">
+                    <i class="fas fa-external-link-alt mr-2"></i>Ver más observaciones
+                </a>
+            </div>
+        </section>
+    </main>
 
+    <!-- Footer -->
+    <footer class="bg-naturaleza text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Municipalidad de Guardia Mitre</h4>
+                    <p class="text-green-200 text-sm">
+                        Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contacto</h4>
+                    <p class="text-green-200 text-sm">
+                        Para más información sobre los senderos y actividades.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-green-700 mt-8 pt-4 text-center">
+                <p class="text-green-200 text-sm">
+                    © 2024 Municipalidad de Guardia Mitre. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/main.js"></script>
+    
+    <script>
+        // Datos de especies (en producción podrían venir de una API o Google Sheets)
+        const especiesData = [
+            {
+                id: 1,
+                nombreComun: 'Arrayán',
+                nombreCientifico: 'Luma apiculata',
+                tipo: 'flora',
+                descripcion: 'Árbol nativo de la región patagónica con flores blancas aromáticas. Su corteza es lisa y de color gris-rojizo. Puede alcanzar hasta 15 metros de altura.',
+                esNativa: true,
+                imagen: '🌳',
+                estacion: 'Primavera-Verano',
+                habitat: 'Bosques húmedos y margenes de arroyos',
+                altitud: '0-1000m',
+                estadoConservacion: 'Preocupación menor'
+            },
+            {
+                id: 2,
+                nombreComun: 'Cóndor Andino',
+                nombreCientifico: 'Vultur gryphus',
+                tipo: 'fauna',
+                descripcion: 'Ave rapaz emblemática de los Andes, en peligro de extinción. Es el ave voladora más pesada del mundo con una envergadura de hasta 3 metros.',
+                esNativa: true,
+                imagen: '🦅',
+                estacion: 'Todo el año',
+                habitat: 'Zonas montañosas y acantilados',
+                altitud: '500-4500m',
+                estadoConservacion: 'En peligro crítico'
+            },
+            {
+                id: 3,
+                nombreComun: 'Chilco',
+                nombreCientifico: 'Fuchsia magellanica',
+                tipo: 'flora',
+                descripcion: 'Arbusto con flores colgantes de color rojo intenso. Muy atractivo para colibríes y otros polinizadores. Florece desde primavera hasta otoño.',
+                esNativa: true,
+                imagen: '🌺',
+                estacion: 'Verano-Otoño',
+                habitat: 'Bosques húmedos y claros del bosque',
+                altitud: '0-800m',
+                estadoConservacion: 'Preocupación menor'
+            },
+            {
+                id: 4,
+                nombreComun: 'Zorro Gris',
+                nombreCientifico: 'Lycalopex griseus',
+                tipo: 'fauna',
+                descripcion: 'Mamífero carnívoro de tamaño mediano, muy adaptable. Tiene un pelaje grisáceo con patas rojizas. Es principalmente nocturno y solitario.',
+                esNativa: true,
+                imagen: '🦊',
+                estacion: 'Todo el año',
+                habitat: 'Diversos hábitats desde bosques hasta pastizales',
+                altitud: '0-2000m',
+                estadoConservacion: 'Preocupación menor'
+            },
+            {
+                id: 5,
+                nombreComun: 'Maitén',
+                nombreCientifico: 'Maytenus boaria',
+                tipo: 'flora',
+                descripcion: 'Árbol caducifolio nativo con hojas pequeñas y flores veraniles. Muy resistente a la sequía y utilizado para sombra en zonas áridas.',
+                esNativa: true,
+                imagen: '🌿',
+                estacion: 'Primavera-Verano',
+                habitat: 'Bosques xerófilos y zonas áridas',
+                altitud: '0-1500m',
+                estadoConservacion: 'Preocupación menor'
+            },
+            {
+                id: 6,
+                nombreComun: 'Tuco-tuco',
+                nombreCientifico: 'Ctenomys sp.',
+                tipo: 'fauna',
+                descripcion: 'Roedor excavador de tamaño pequeño que pasa la mayor parte del tiempo bajo tierra. Tiene grandes dientes para excavar túneles.',
+                esNativa: true,
+                imagen: '🐹',
+                estacion: 'Todo el año',
+                habitat: 'Zonas de suelo suave y seco',
+                altitud: '0-1000m',
+                estadoConservacion: 'Datos insuficientes'
+            },
+            {
+                id: 7,
+                nombreComun: 'Sauce Llorón',
+                nombreCientifico: 'Salix babylonica',
+                tipo: 'flora',
+                descripcion: 'Árbol introducido de rápido crecimiento con ramas colgantes. Muy común en zonas urbanas y ribereñas, aunque no es nativo.',
+                esNativa: false,
+                imagen: '🌳',
+                estacion: 'Primavera-Verano',
+                habitat: 'Zonas ribereñas y urbanas',
+                altitud: '0-1000m',
+                estadoConservacion: 'Introducida'
+            },
+            {
+                id: 8,
+                nombreComun: 'Chimango',
+                nombreCientifico: 'Milvago chimango',
+                tipo: 'fauna',
+                descripcion: 'Ave rapaz de tamaño mediano muy común en zonas abiertas. Se alimenta de pequeños animales e insectos. Muy adaptable a ambientes modificados.',
+                esNativa: true,
+                imagen: '🦅',
+                estacion: 'Todo el año',
+                habitat: 'Zonas abiertas, campos y áreas urbanas',
+                altitud: '0-1500m',
+                estadoConservacion: 'Preocupación menor'
+            }
+        ];
+
+        // Observaciones de ejemplo (simulando datos de iNaturalist)
+        const observacionesEjemplo = [
+            {
+                especie: 'Arrayán',
+                observador: 'María S.',
+                fecha: '2024-03-10',
+                lugar: 'Sendero del Río',
+                foto: '🌳',
+                identificada: true
+            },
+            {
+                especie: 'Chimango',
+                observador: 'Carlos M.',
+                fecha: '2024-03-09',
+                lugar: 'Sendero de la Selva',
+                foto: '🦅',
+                identificada: true
+            },
+            {
+                especie: 'Chilco',
+                observador: 'Ana L.',
+                fecha: '2024-03-08',
+                lugar: 'Mirador del Río',
+                foto: '🌺',
+                identificada: true
+            }
+        ];
+
+        // Estado actual de filtros
+        let filtroActual = 'todos';
+        let busquedaActual = '';
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEspecies();
+            cargarObservaciones();
+            configurarEventos();
+        });
+
+        // Función para cargar especies
+        function cargarEspecies() {
+            const container = document.getElementById('especies-container');
+            container.innerHTML = '';
+            
+            let especiesFiltradas = especiesData;
+            
+            // Aplicar filtros
+            if (filtroActual === 'flora') {
+                especiesFiltradas = especiesFiltradas.filter(e => e.tipo === 'flora');
+            } else if (filtroActual === 'fauna') {
+                especiesFiltradas = especiesFiltradas.filter(e => e.tipo === 'fauna');
+            } else if (filtroActual === 'nativas') {
+                especiesFiltradas = especiesFiltradas.filter(e => e.esNativa);
+            } else if (filtroActual === 'introducidas') {
+                especiesFiltradas = especiesFiltradas.filter(e => !e.esNativa);
+            }
+            
+            // Aplicar búsqueda
+            if (busquedaActual) {
+                const busqueda = busquedaActual.toLowerCase();
+                especiesFiltradas = especiesFiltradas.filter(e => 
+                    e.nombreComun.toLowerCase().includes(busqueda) ||
+                    e.nombreCientifico.toLowerCase().includes(busqueda) ||
+                    e.descripcion.toLowerCase().includes(busqueda)
+                );
+            }
+            
+            if (especiesFiltradas.length === 0) {
+                container.innerHTML = `
+                    <div class="md:col-span-2 lg:col-span-3 text-center py-12">
+                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-bold text-gray-600 mb-2">No se encontraron especies</h3>
+                        <p class="text-gray-500">Intenta ajustar los filtros o la búsqueda</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            especiesFiltradas.forEach((especie, index) => {
+                const estadoClase = especie.esNativa ? 'estado-nativa' : 'estado-introducida';
+                const estadoTexto = especie.esNativa ? 'Nativa' : 'Introducida';
+                const tipoIcono = especie.tipo === 'flora' ? '🌱' : '🦅';
+                
+                const especieHTML = `
+                    <div class="especie-card animate-fadeIn" style="animation-delay: ${index * 0.1}s">
+                        <div class="especie-imagen">
+                            ${especie.imagen}
+                        </div>
+                        <div class="especie-content">
+                            <div class="especie-tipo ${especie.tipo === 'flora' ? 'tipo-flora' : 'tipo-fauna'}">
+                                ${tipoIcono} ${especie.tipo === 'flora' ? 'Flora' : 'Fauna'}
+                            </div>
+                            <h4 class="especie-nombre-comun">${especie.nombreComun}</h4>
+                            <div class="especie-nombre-cientifico">${especie.nombreCientifico}</div>
+                            <p class="especie-descripcion">${especie.descripcion}</p>
+                            <div class="especie-estado ${estadoClase}">
+                                <i class="fas fa-leaf mr-1"></i>
+                                ${estadoTexto}
+                            </div>
+                            <div class="mt-3 text-sm text-gray-600">
+                                <div><i class="fas fa-calendar mr-1"></i>Estación: ${especie.estacion}</div>
+                                <div><i class="fas fa-mountain mr-1"></i>Hábitat: ${especie.habitat}</div>
+                                <div><i class="fas fa-thermometer-half mr-1"></i>Altitud: ${especie.altitud}</div>
+                            </div>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <button onclick="identificarConPlantNet('${especie.nombreComun}')" 
+                                        class="integracion-btn text-xs"
+                                        ${especie.tipo === 'fauna' ? 'style="display:none;"' : ''}>
+                                    <i class="fas fa-camera mr-1"></i>PlantNet
+                                </button>
+                                <button onclick="registrarEnINaturalist('${especie.nombreComun}')" 
+                                        class="integracion-btn text-xs">
+                                    <i class="fas fa-binoculars mr-1"></i>iNaturalist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += especieHTML;
+            });
+        }
+
+        // Función para cargar observaciones
+        function cargarObservaciones() {
+            const container = document.getElementById('observaciones-container');
+            container.innerHTML = '';
+            
+            observacionesEjemplo.forEach((obs, index) => {
+                const fechaFormateada = new Date(obs.fecha).toLocaleDateString('es-AR');
+                
+                const obsHTML = `
+                    <div class="bg-gray-50 rounded-lg p-4 animate-fadeIn" style="animation-delay: ${index * 0.1}s">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="text-2xl">${obs.foto}</div>
+                                <div>
+                                    <div class="font-bold text-naturaleza">${obs.especie}</div>
+                                    <div class="text-sm text-gray-500">${obs.lugar}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">${fechaFormateada}</div>
+                                <div class="text-xs text-green-600">
+                                    <i class="fas fa-check-circle mr-1"></i>Identificada
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-user mr-1"></i>Por ${obs.observador}
+                            </div>
+                            <button onclick="verEnINaturalist('${obs.especie}')" class="text-blue-600 hover:text-blue-800 text-sm">
+                                <i class="fas fa-external-link-alt mr-1"></i>Ver en iNaturalist
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += obsHTML;
+            });
+        }
+
+        // Función para configurar eventos
+        function configurarEventos() {
+            // Búsqueda en tiempo real
+            const busquedaInput = document.getElementById('busqueda');
+            let busquedaTimeout;
+            
+            busquedaInput.addEventListener('input', function() {
+                clearTimeout(busquedaTimeout);
+                busquedaTimeout = setTimeout(() => {
+                    busquedaActual = this.value.trim();
+                    cargarEspecies();
+                }, 300);
+            });
+            
+            // Filtros
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Actualizar estado activo
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Actualizar filtro
+                    filtroActual = this.dataset.filtro;
+                    cargarEspecies();
+                });
+            });
+        }
+
+        // Funciones de integración
+        function identificarConPlantNet(especie) {
+            // Abrir PlantNet con búsqueda de la especie
+            const url = `https://identify.plantnet.org/es?q=${encodeURIComponent(especie)}`;
+            window.open(url, '_blank');
+        }
+
+        function registrarEnINaturalist(especie) {
+            // Abrir iNaturalist para registrar observación
+            const url = `https://www.inaturalist.org/observations/new?taxon_name=${encodeURIComponent(especie)}`;
+            window.open(url, '_blank');
+        }
+
+        function verEnINaturalist(especie) {
+            // Buscar observaciones de la especie en iNaturalist
+            const url = `https://www.inaturalist.org/observations?taxon_name=${encodeURIComponent(especie)}&place_id=any`;
+            window.open(url, '_blank');
+        }
+
+        // Función para compartir especie
+        function compartirEspecie(especie) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `Especie encontrada en Guardia Mitre: ${especie}`,
+                    text: `Descubrí esta especie en los senderos de Guardia Mitre: ${especie}. ¡Ven a conocerla!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback para navegadores que no soportan Web Share API
+                const texto = `¡Mira esta especie que encontré en Guardia Mitre: ${especie}! ${window.location.href}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+                window.open(whatsappUrl, '_blank');
+            }
+        }
+    </script>
 </body>
 </html>
