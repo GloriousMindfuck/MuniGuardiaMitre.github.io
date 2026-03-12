@@ -1,54 +1,523 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Registrar Tiempo</title>
-
-<style>
-
-body{
-font-family:Arial;
-text-align:center;
-padding:40px;
-}
-
-input,select,button{
-padding:10px;
-margin:10px;
-font-size:16px;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Tiempo - Guardia Mitre</title>
+    <meta name="description" content="Registra tu tiempo de recorrido en los senderos de Guardia Mitre. Participa del ranking y compara tus tiempos con otros visitantes.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/estilos.css">
+    
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'naturaleza': '#2D5016',
+                        'rio': '#2563EB',
+                        'accion': '#F97316',
+                        'ranking': '#F59E0B',
+                        'naturaleza-claro': '#4ADE80',
+                        'rio-claro': '#60A5FA'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 </head>
+<body class="bg-green-50 font-sans">
+    <!-- Header -->
+    <header class="bg-naturaleza text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-stopwatch text-3xl text-naturaleza-claro"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Registrar Tiempo</h1>
+                        <p class="text-green-200 text-sm">Guardia Mitre - Río Negro, Argentina</p>
+                    </div>
+                </div>
+                <a href="../index.html" class="text-white hover:text-naturaleza-claro transition-colors">
+                    <i class="fas fa-home text-2xl"></i>
+                </a>
+            </div>
+            
+            <!-- Navegación -->
+            <nav class="mt-4">
+                <ul class="flex flex-wrap gap-2">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../senderos/index.html" class="nav-link">Senderos</a></li>
+                    <li><a href="../mapa/index.html" class="nav-link">Mapa</a></li>
+                    <li><a href="index.html" class="nav-link active">Registrar Tiempo</a></li>
+                    <li><a href="../ranking/index.html" class="nav-link">Ranking</a></li>
+                    <li><a href="../flora/index.html" class="nav-link">Flora y Fauna</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-4xl font-bold text-naturaleza mb-4">
+                    Registra tu Tiempo de Caminata
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    Registra tu tiempo de recorrido y compite con otros visitantes. ¡Demuestra que eres el más rápido!
+                </p>
+                <div class="bg-orange-50 border-l-4 border-accion p-4 mb-6">
+                    <p class="text-accion font-medium">
+                        <i class="fas fa-trophy mr-2"></i>
+                        ¡Los mejores tiempos aparecerán en el ranking público!
+                    </p>
+                </div>
+            </div>
+        </section>
 
-<h1>Registrar tiempo del sendero</h1>
+        <!-- Formulario de registro -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <form id="form-tiempo" class="max-w-2xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nombre -->
+                    <div class="md:col-span-2">
+                        <label for="nombre" class="form-label">
+                            <i class="fas fa-user mr-2"></i>Tu nombre o apodo
+                        </label>
+                        <input type="text" id="nombre" name="nombre" class="form-input" 
+                               placeholder="Ej: Juan Pérez o Senderista2024" required>
+                        <p class="text-sm text-gray-500 mt-1">Este nombre aparecerá en el ranking público</p>
+                    </div>
 
-<form>
+                    <!-- Sendero -->
+                    <div>
+                        <label for="sendero" class="form-label">
+                            <i class="fas fa-route mr-2"></i>Sendero realizado
+                        </label>
+                        <select id="sendero" name="sendero" class="form-select" required>
+                            <option value="">Selecciona un sendero</option>
+                            <option value="sendero-rio">Sendero del Río (2.5km)</option>
+                            <option value="sendero-selva">Sendero de la Selva (4.2km)</option>
+                            <option value="sendero-cumbres">Sendero de las Cumbres (6.8km)</option>
+                        </select>
+                    </div>
 
-<input placeholder="Tu nombre">
+                    <!-- Tiempo -->
+                    <div>
+                        <label for="tiempo" class="form-label">
+                            <i class="fas fa-clock mr-2"></i>Tiempo total (minutos)
+                        </label>
+                        <input type="number" id="tiempo" name="tiempo" class="form-input" 
+                               placeholder="Ej: 45" min="1" max="999" required>
+                        <p class="text-sm text-gray-500 mt-1">Tiempo desde el inicio hasta el final</p>
+                    </div>
 
-<br>
+                    <!-- Fecha -->
+                    <div>
+                        <label for="fecha" class="form-label">
+                            <i class="fas fa-calendar mr-2"></i>Fecha del recorrido
+                        </label>
+                        <input type="date" id="fecha" name="fecha" class="form-input" required>
+                    </div>
 
-<select>
-<option>Sendero Fácil</option>
-<option>Sendero Difícil</option>
-</select>
+                    <!-- Hora de inicio -->
+                    <div>
+                        <label for="hora-inicio" class="form-label">
+                            <i class="fas fa-play mr-2"></i>Hora de inicio
+                        </label>
+                        <input type="time" id="hora-inicio" name="hora-inicio" class="form-input">
+                    </div>
 
-<br>
+                    <!-- Clima -->
+                    <div>
+                        <label for="clima" class="form-label">
+                            <i class="fas fa-cloud-sun mr-2"></i>Condición del clima
+                        </label>
+                        <select id="clima" name="clima" class="form-select">
+                            <option value="">Selecciona el clima</option>
+                            <option value="soleado">Soleado</option>
+                            <option value="nublado">Nublado</option>
+                            <option value="lluvioso">Lluvioso</option>
+                            <option value="ventoso">Ventoso</option>
+                        </select>
+                    </div>
 
-<input placeholder="Tiempo (ej: 25:30)">
+                    <!-- Comentarios -->
+                    <div class="md:col-span-2">
+                        <label for="comentarios" class="form-label">
+                            <i class="fas fa-comment mr-2"></i>Comentarios (opcional)
+                        </label>
+                        <textarea id="comentarios" name="comentarios" class="form-textarea" rows="3"
+                                  placeholder="Comparte tu experiencia, condiciones del sendero, avistamientos de fauna, etc."></textarea>
+                    </div>
 
-<br>
+                    <!-- Términos -->
+                    <div class="md:col-span-2">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" id="terminos" name="terminos" class="mt-1" required>
+                            <span class="text-sm text-gray-600">
+                                Acepto que mi nombre y tiempo de recorrido aparezcan públicamente en el ranking. 
+                                Entiendo que puedo solicitar la eliminación de mis datos contactando a la municipalidad.
+                            </span>
+                        </label>
+                    </div>
+                </div>
 
-<button>Enviar</button>
+                <!-- Botones -->
+                <div class="flex flex-wrap gap-4 justify-center mt-8">
+                    <button type="submit" class="btn btn-accion text-lg px-8">
+                        <i class="fas fa-save mr-2"></i>Registrar tiempo
+                    </button>
+                    <button type="button" onclick="verRanking()" class="btn btn-ranking text-lg px-8">
+                        <i class="fas fa-trophy mr-2"></i>Ver ranking
+                    </button>
+                </div>
+            </form>
+        </section>
 
-</form>
+        <!-- Información sobre Google Sheets -->
+        <section class="bg-blue-50 rounded-xl p-6 mb-8">
+            <h3 class="text-lg font-bold text-blue-800 mb-3">
+                <i class="fas fa-info-circle mr-2"></i>¿Cómo funciona el registro?
+            </h3>
+            <div class="text-blue-700 space-y-2 text-sm">
+                <p><strong>1. Completa el formulario:</strong> Ingresa tu nombre, selecciona el sendero y registra tu tiempo.</p>
+                <p><strong>2. Procesamiento:</strong> Los datos se procesan automáticamente mediante Google Forms.</p>
+                <p><strong>3. Actualización:</strong> El ranking se actualiza cada 15 minutos con los nuevos registros.</p>
+                <p><strong>4. Privacidad:</strong> Solo tu nombre/apodo aparece públicamente, tus datos personales están protegidos.</p>
+            </div>
+            
+            <div class="mt-4 p-4 bg-yellow-100 rounded-lg">
+                <p class="text-yellow-800 text-sm">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <strong>Importante:</strong> Para que el sistema funcione correctamente, necesitas configurar tu propio Google Forms. 
+                    Las instrucciones están en la documentación del proyecto.
+                </p>
+            </div>
+        </section>
 
+        <!-- Últimos registros -->
+        <section class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-naturaleza mb-6">
+                <i class="fas fa-history mr-2"></i>Últimos tiempos registrados
+            </h3>
+            <div id="ultimos-registros" class="space-y-4">
+                <!-- Los registros se cargarán dinámicamente aquí -->
+            </div>
+            <div class="text-center mt-6">
+                <a href="../ranking/index.html" class="btn btn-naturaleza">
+                    <i class="fas fa-list mr-2"></i>Ver todos los registros
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-naturaleza text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Municipalidad de Guardia Mitre</h4>
+                    <p class="text-green-200 text-sm">
+                        Promoviendo el turismo de naturaleza y la educación ambiental en Río Negro.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contacto</h4>
+                    <p class="text-green-200 text-sm">
+                        Para más información sobre los senderos y actividades.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-green-700 mt-8 pt-4 text-center">
+                <p class="text-green-200 text-sm">
+                    © 2024 Municipalidad de Guardia Mitre. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/main.js"></script>
+    
+    <script>
+        // Configuración de Google Forms (simulado)
+        const GOOGLE_FORMS_CONFIG = {
+            // En producción, reemplazar con tu ID de Google Forms
+            formUrl: 'https://docs.google.com/forms/d/YOUR_FORM_ID/formResponse',
+            // IDs de los campos del formulario (se obtienen inspeccionando el formulario)
+            fieldIds: {
+                nombre: 'entry.123456789',
+                sendero: 'entry.987654321',
+                tiempo: 'entry.111111111',
+                fecha: 'entry.222222222',
+                clima: 'entry.333333333',
+                comentarios: 'entry.444444444'
+            }
+        };
+
+        // Datos de ejemplo para mostrar (en producción vendrían de Google Sheets)
+        const registrosEjemplo = [
+            {
+                nombre: 'Carlos M.',
+                sendero: 'sendero-rio',
+                tiempo: 38,
+                fecha: '2024-03-10',
+                clima: 'soleado',
+                comentarios: 'Excelente día, muchas aves en el río'
+            },
+            {
+                nombre: 'María S.',
+                sendero: 'sendero-selva',
+                tiempo: 82,
+                fecha: '2024-03-09',
+                clima: 'nublado',
+                comentarios: 'Hermoso sendero, muy fresco bajo los árboles'
+            },
+            {
+                nombre: 'Juan P.',
+                sendero: 'sendero-cumbres',
+                tiempo: 135,
+                fecha: '2024-03-08',
+                clima: 'ventoso',
+                comentarios: 'Desafiante pero valió la pena por las vistas'
+            }
+        ];
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fecha actual
+            document.getElementById('fecha').value = Utils.getCurrentDate();
+            
+            // Cargar últimos registros
+            cargarUltimosRegistros();
+            
+            // Si hay parámetros en la URL, prellenar el sendero
+            const urlParams = new URLSearchParams(window.location.search);
+            const senderoParam = urlParams.get('sendero');
+            if (senderoParam) {
+                document.getElementById('sendero').value = senderoParam;
+            }
+        });
+
+        // Manejar el envío del formulario
+        document.getElementById('form-tiempo').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validaciones adicionales
+            if (!data.nombre || !data.sendero || !data.tiempo || !data.fecha) {
+                Utils.showToast('Por favor completa todos los campos requeridos', 'error');
+                return;
+            }
+            
+            if (parseInt(data.tiempo) <= 0) {
+                Utils.showToast('El tiempo debe ser mayor a 0 minutos', 'error');
+                return;
+            }
+            
+            if (!data.terminos) {
+                Utils.showToast('Debes aceptar los términos y condiciones', 'error');
+                return;
+            }
+            
+            // Mostrar indicador de carga
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registrando...';
+            submitBtn.disabled = true;
+            
+            try {
+                // En producción, aquí se enviaría a Google Forms
+                // Por ahora, simulamos el registro local
+                const resultado = await registrarTiempo(data);
+                
+                if (resultado.success) {
+                    Utils.showToast('¡Tiempo registrado exitosamente!', 'success');
+                    
+                    // Limpiar formulario
+                    this.reset();
+                    document.getElementById('fecha').value = Utils.getCurrentDate();
+                    
+                    // Recargar últimos registros
+                    cargarUltimosRegistros();
+                    
+                    // Opcional: redirigir al ranking
+                    setTimeout(() => {
+                        if (confirm('¿Quieres ver el ranking actualizado?')) {
+                            window.location.href = '../ranking/index.html';
+                        }
+                    }, 2000);
+                } else {
+                    throw new Error(resultado.error || 'Error al registrar');
+                }
+                
+            } catch (error) {
+                console.error('Error al registrar tiempo:', error);
+                Utils.showToast('Error al registrar el tiempo: ' + error.message, 'error');
+            } finally {
+                // Restaurar botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Función para registrar tiempo (simulado)
+        async function registrarTiempo(data) {
+            // Simular envío a Google Forms
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Guardar localmente (en producción esto no sería necesario)
+            const nuevoRegistro = {
+                id: Utils.generateId(),
+                nombre: data.nombre,
+                sendero: data.sendero,
+                tiempo: parseInt(data.tiempo),
+                fecha: data.fecha,
+                clima: data.clima || 'no especificado',
+                comentarios: data.comentarios || '',
+                timestamp: Date.now()
+            };
+            
+            // Guardar en localStorage (simulando Google Sheets)
+            const registros = LocalData.get('tiempos-registrados') || [];
+            registros.unshift(nuevoRegistro);
+            
+            // Mantener solo los últimos 100 registros
+            if (registros.length > 100) {
+                registros.splice(100);
+            }
+            
+            LocalData.save('tiempos-registrados', registros);
+            
+            return { success: true, data: nuevoRegistro };
+        }
+
+        // Función para cargar últimos registros
+        function cargarUltimosRegistros() {
+            // Obtener registros de localStorage (simulando Google Sheets)
+            const registros = LocalData.get('tiempos-registrados') || registrosEjemplo;
+            const ultimosRegistros = registros.slice(0, 5);
+            
+            const container = document.getElementById('ultimos-registros');
+            container.innerHTML = '';
+            
+            if (ultimosRegistros.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-clock text-4xl mb-4"></i>
+                        <p>No hay registros aún. ¡Sé el primero en registrar tu tiempo!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            ultimosRegistros.forEach((registro, index) => {
+                const senderoNombre = {
+                    'sendero-rio': 'Sendero del Río',
+                    'sendero-selva': 'Sendero de la Selva', 
+                    'sendero-cumbres': 'Sendero de las Cumbres'
+                }[registro.sendero] || 'Sendero desconocido';
+                
+                const fechaFormateada = new Date(registro.fecha).toLocaleDateString('es-AR');
+                const tiempoFormateado = Utils.formatTime(registro.tiempo);
+                
+                const registroHTML = `
+                    <div class="bg-gray-50 rounded-lg p-4 animate-fadeIn" style="animation-delay: ${index * 0.1}s">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-accion text-white rounded-full flex items-center justify-center font-bold">
+                                    ${registro.nombre.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-naturaleza">${registro.nombre}</div>
+                                    <div class="text-sm text-gray-600">${senderoNombre}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-accion">${tiempoFormateado}</div>
+                                <div class="text-sm text-gray-500">${fechaFormateada}</div>
+                            </div>
+                        </div>
+                        ${registro.comentarios ? `<p class="text-sm text-gray-600 mt-2 italic">"${registro.comentarios}"</p>` : ''}
+                    </div>
+                `;
+                
+                container.innerHTML += registroHTML;
+            });
+        }
+
+        // Función para ver el ranking
+        function verRanking() {
+            window.location.href = '../ranking/index.html';
+        }
+
+        // Función para exportar datos (opcional)
+        function exportarDatos() {
+            const registros = LocalData.get('tiempos-registrados') || [];
+            if (registros.length === 0) {
+                Utils.showToast('No hay datos para exportar', 'warning');
+                return;
+            }
+            
+            // Convertir a CSV
+            const csv = convertirACSV(registros);
+            descargarArchivo(csv, 'tiempos-guardia-mitre.csv', 'text/csv');
+        }
+
+        function convertirACSV(datos) {
+            const cabeceras = ['Nombre', 'Sendero', 'Tiempo (min)', 'Fecha', 'Clima', 'Comentarios'];
+            const filas = datos.map(d => [
+                d.nombre,
+                d.sendero,
+                d.tiempo,
+                d.fecha,
+                d.clima,
+                d.comentarios
+            ]);
+            
+            return [cabeceras, ...filas].map(fila => fila.join(',')).join('\n');
+        }
+
+        function descargarArchivo(contenido, nombre, tipo) {
+            const blob = new Blob([contenido], { type: tipo });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nombre;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
 </body>
 </html>
